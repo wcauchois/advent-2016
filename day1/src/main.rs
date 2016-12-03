@@ -2,6 +2,7 @@
 
 use std::io::prelude::*;
 use std::fs::File;
+use std::collections::HashSet;
 
 type Vec2 = (i32, i32);
 
@@ -105,12 +106,24 @@ fn main() {
   let mut pos = (0, 0);
   let mut dir = Direction::N;
 
+  let mut visited = HashSet::new();
+  let mut answer: Option<Vec2> = None;
+
   for i in instrs {
     dir = dir.turn(i.turn);
-    pos = vec_add(pos, vec_scale(dir.to_vec(), i.amount));
+    let dir_vec = dir.to_vec();
+    for _ in 0..(i.amount) {
+      pos = vec_add(pos, dir_vec);
+      if visited.contains(&pos) && answer.is_none() {
+        answer = Some(pos);
+      } else {
+        visited.insert(pos);
+      }
+    }
   }
 
   println!("Final position: {:?}", pos);
-  println!("Distance from start: {}", taxi_distance((0, 0), pos));
+  println!("Location that was visited twice: {:?}", answer.unwrap());
+  println!("Distance: {:?}", taxi_distance((0, 0), answer.unwrap()));
 }
 
