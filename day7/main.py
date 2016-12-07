@@ -8,28 +8,48 @@ def has_sequence(s):
       return True
   return False
 
+def get_abas(s):
+  result = []
+  for (a, b, c) in zip(s, s[1:], s[2:]):
+    if a == c and a != b:
+      result.append((a, b, c))
+  return result
+
+def has_bab(s, abas):
+  for (a, b, c) in zip(s, s[1:], s[2:]):
+    for (d, e, f) in abas:
+      if a == e and d == f and d == b and c == e:
+        return True
+  return False
+
 count = 0
 for line in open('input.txt', 'r').readlines():
   line = line.strip()
   buf = ''
   in_brackets = False
   valid = False
-  hard_invalid = False
+  abas_list = []
   for c in line:
     if c == '[':
-      if has_sequence(buf):
-        valid = True
+      abas_list.extend(get_abas(buf))
       buf = ''
     elif c == ']':
       in_brackets = False
-      if has_sequence(buf):
-        hard_invalid = True
       buf = ''
     else:
       buf += c
-  if has_sequence(buf) and not in_brackets:
-    valid = True
-  if valid and not hard_invalid:
+  for c in line:
+    if c == '[':
+      abas_list.extend(get_abas(buf))
+      buf = ''
+    elif c == ']':
+      in_brackets = False
+      if has_bab(buf, abas_list):
+        valid = True
+      buf = ''
+    else:
+      buf += c
+  if valid:
     count += 1
 
 print count
