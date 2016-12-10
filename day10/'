@@ -1,0 +1,22 @@
+import re
+from collections import defaultdict
+
+class Bot:
+  def __init__(self):
+    self.chips = []
+    self.instruction = None
+
+  def give_chip(self, chip):
+    self.chips.append(chip)
+
+  def instruct(self, give_low, give_high):
+    self.instruction = (give_low, give_high)
+
+goes_instruction = re.compile(r'value (\d+) goes to bot (\d+)')
+gives_instruction = re.compile(
+  r'bot (\d+) gives low to bot (\d+) and high to bot (\d+)')
+
+bots = defaultdict(Bot)
+
+for line in open('test_input.txt', 'r').readlines():
+
